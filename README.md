@@ -1,16 +1,50 @@
-# swipe_joy
+# SwipeJoy
 
-A new Flutter project.
+Flutter приложение с интерфейсом в стиле iOS App Switcher, где пользователи могут свайпать карточки вверх для их удаления.
 
-## Getting Started
+## Особенности
 
-This project is a starting point for a Flutter application.
+- **Стопка карточек**: Карточки отображаются в виде стопки с эффектом глубины
+- **Свайп для удаления**: Свайп вверх удаляет карточку
+- **Бесконечный поток**: При удалении карточки автоматически добавляется новая вниз стопки
+- **Плавная анимация**: Красивые переходы и анимации
+- **Адаптивный дизайн**: Работает на разных размерах экранов
 
-A few resources to get you started if this is your first Flutter project:
+## Технологии
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Flutter
+- Dart
+- Material Design
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Установка и запуск
+
+1. Убедитесь, что у вас установлен Flutter SDK
+2. Клонируйте репозиторий:
+   ```bash
+   git clone https://github.com/CoMatu/swipeJoy.git
+   cd swipeJoy
+   ```
+3. Установите зависимости:
+   ```bash
+   flutter pub get
+   ```
+4. Запустите приложение:
+   ```bash
+   flutter run
+   ```
+
+## Структура проекта
+
+- `lib/main.dart` - Точка входа в приложение
+- `lib/home_page.dart` - Основная страница с интерфейсом карточек
+
+## Как использовать
+
+1. Откройте приложение
+2. Вы увидите стопку цветных карточек
+3. Свайпните любую карточку вверх для её удаления
+4. Новая карточка автоматически появится внизу стопки
+
+## Лицензия
+
+MIT License
