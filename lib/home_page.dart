@@ -24,8 +24,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     Colors.lime,
   ];
 
-  // Initialize with a large number to simulate infinite list
-  final List<int> _cards = List.generate(100, (index) => index);
+  // Список карточек, который будет пополняться динамически
+  final List<int> _cards = List.generate(10, (index) => index);
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +58,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<Widget> _buildCardStack() {
     final List<Widget> cardWidgets = [];
 
+    // Проверяем, нужно ли добавить новые карточки
+    _ensureEnoughCards();
+
     // Show only the top 3 cards for performance
     final int startIndex = math.max(0, _cards.length - 3);
     final int endIndex = _cards.length;
@@ -86,14 +89,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return cardWidgets.reversed.toList(); // Reverse to get correct z-order
   }
 
+  // Метод для обеспечения достаточного количества карточек
+  void _ensureEnoughCards() {
+    // Если осталось менее 5 карточек, добавляем еще 10
+    if (_cards.length < 5) {
+      final int lastIndex = _cards.isEmpty ? 0 : _cards.reduce(math.max);
+      for (int i = 1; i <= 10; i++) {
+        _cards.add(lastIndex + i);
+      }
+    }
+  }
+
   void _dismissCard(int index) {
     setState(() {
+      // Удаляем карточку
       _cards.removeAt(index);
-      // Add a new card at the beginning to keep the list "infinite"
-      if (_cards.length < 20) {
-        // Ensure we always have enough cards
-        _cards.insert(0, _cards.isEmpty ? 0 : _cards.first - 1);
-      }
+
+      // Всегда добавляем новую карточку в начало списка
+      // Используем значение меньше минимального в списке для сохранения порядка
+      final newCardIndex = _cards.isEmpty ? 0 : (_cards.reduce(math.min) - 1);
+      _cards.insert(0, newCardIndex);
     });
   }
 }
