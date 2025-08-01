@@ -72,8 +72,9 @@ class _HomePageState extends State<HomePage> {
   void _dismissCard(int index) {
     setState(() {
       _cards.removeAt(index);
-      // Add a new card at the beginning to keep the list "infinite"
-      _cards.insert(0, _cards.isEmpty ? 0 : _cards.first - 1);
+      // Add a new card at the end (bottom of the stack)
+      final newCardIndex = _cards.isEmpty ? 0 : _cards.reduce(math.max) + 1;
+      _cards.add(newCardIndex);
     });
   }
 }
