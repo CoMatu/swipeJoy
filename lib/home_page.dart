@@ -8,7 +8,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final List<Color> _colors = [
     Colors.red,
     Colors.blue,
@@ -21,6 +21,31 @@ class _HomePageState extends State<HomePage> {
   ];
 
   final List<int> _cards = List.generate(20, (index) => index);
+
+  // Анимация для плавного перехода карточек
+  late AnimationController _cardAnimationController;
+  late Animation<double> _cardAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _cardAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _cardAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _cardAnimationController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _cardAnimationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,20 +73,33 @@ class _HomePageState extends State<HomePage> {
     for (int i = startIndex; i < endIndex; i++) {
       final int cardIndex = _cards[i];
       final int displayIndex = i - startIndex;
-      final double topPosition = 100.0 + (displayIndex * 20);
-      final double scale = 1.0 - (displayIndex * 0.05);
+
+      // Базовые позиции
+      final double baseTopPosition = 100.0 + (displayIndex * 20);
+      final double baseScale = 1.0 - (displayIndex * 0.05);
+
+      // Анимированные позиции с учетом анимации
+      final double animatedTopPosition =
+          baseTopPosition - (_cardAnimation.value * 20 * (displayIndex + 1));
+      final double animatedScale =
+          baseScale + (_cardAnimation.value * 0.05 * (displayIndex + 1));
 
       cardWidgets.add(
-        Positioned(
-          top: topPosition,
-          child: Transform.scale(
-            scale: scale,
-            child: AppCard(
-              key: ValueKey(cardIndex),
-              color: _colors[cardIndex % _colors.length],
-              onDismiss: () => _dismissCard(i),
-            ),
-          ),
+        AnimatedBuilder(
+          animation: _cardAnimation,
+          builder: (context, child) {
+            return Positioned(
+              top: animatedTopPosition,
+              child: Transform.scale(
+                scale: animatedScale,
+                child: AppCard(
+                  key: ValueKey(cardIndex),
+                  color: _colors[cardIndex % _colors.length],
+                  onDismiss: () => _dismissCard(i),
+                ),
+              ),
+            );
+          },
         ),
       );
     }
@@ -75,6 +113,11 @@ class _HomePageState extends State<HomePage> {
       // Add a new card at the end (bottom of the stack)
       final newCardIndex = _cards.isEmpty ? 0 : _cards.reduce(math.max) + 1;
       _cards.add(newCardIndex);
+    });
+
+    // Запускаем анимацию перехода карточек после обновления состояния
+    _cardAnimationController.forward().then((_) {
+      _cardAnimationController.reset();
     });
   }
 }
